@@ -4,7 +4,6 @@ import { MeshReflectorMaterial } from "@react-three/drei";
 import { LinearEncoding, RepeatWrapping, TextureLoader } from "three";
 
 export function Ground() {
-  // thanks to https://polyhaven.com/a/rough_plasterbrick_05 !
   const [roughness, normal] = useLoader(TextureLoader, [
     process.env.PUBLIC_URL + "textures/terrain-roughness.jpg",
     process.env.PUBLIC_URL + "textures/terrain-normal.jpg",
@@ -21,9 +20,11 @@ export function Ground() {
     normal.encoding = LinearEncoding;
   }, [normal, roughness]);
 
+  //useFrame:每一幀渲染時會執行的操作 (state:当前的渲染状态, delta:当前帧与上一帧之间的时间间隔)
   useFrame((state, delta) => {
     let t = -state.clock.getElapsedTime() * 0.128;
-    roughness.offset.set(0, t % 1);
+    // 偏移植會根據時間而變化, 達到動態效果
+    roughness.offset.set(0, t % 1); 
     normal.offset.set(0, t % 1);
   });
 
@@ -38,18 +39,18 @@ export function Ground() {
         dithering={true}
         color={[0.015, 0.015, 0.015]}
         roughness={0.7}
-        blur={[1000, 400]} // Blur ground reflections (width, heigt), 0 skips blur
-        mixBlur={30} // How much blur mixes with surface roughness (default = 1)
-        mixStrength={80} // Strength of the reflections
-        mixContrast={1} // Contrast of the reflections
-        resolution={1024} // Off-buffer resolution, lower=faster, higher=better quality, slower
-        mirror={0} // Mirror environment, 0 = texture colors, 1 = pick up env colors
-        depthScale={0.01} // Scale the depth factor (0 = no depth, default = 0)
-        minDepthThreshold={0.9} // Lower edge for the depthTexture interpolation (default = 0)
-        maxDepthThreshold={1} // Upper edge for the depthTexture interpolation (default = 0)
-        depthToBlurRatioBias={0.25} // Adds a bias factor to the depthTexture before calculating the blur amount [blurFactor = blurTexture * (depthTexture + bias)]. It accepts values between 0 and 1, default is 0.25. An amount > 0 of bias makes sure that the blurTexture is not too sharp because of the multiplication with the depthTexture
+        blur={[1000, 400]}  // 模糊地面反射（寬度、高度），0 為跳過模糊
+        mixBlur={30}  // 模糊和表面粗糙度混合的程度（默認 = 1）
+        mixStrength={80} //反射強度
+        mixContrast={1} // 反射對比度
+        resolution={1024} //Off-buffer 解析度，越低=越快，越高=更好的質量，更慢
+        mirror={0} // 鏡像環境，0 = 紋理顏色，1 = 選擇環境顏色
+        depthScale={0.01} // 深度因素的比例（0 = 無深度，默認 = 0）
+        minDepthThreshold={0.9} // 深度紋理插值的下限（默認 = 0）
+        maxDepthThreshold={1} // 深度紋理插值的上限（默認 = 0）
+        depthToBlurRatioBias={0.25} // 在計算模糊量之前對深度紋理添加偏差因子[模糊因子=模糊紋理*（深度紋理+偏差）]。它接受介於 0 和 1 之間的值，默認值為 0.25。偏差量 > 0 確保模糊紋理不會因為與深度紋理的乘法而太尖銳
         debug={0}
-        reflectorOffset={0.2} // Offsets the virtual camera that projects the reflection. Useful when the reflective surface is some distance from the object's origin (default = 0)
+        reflectorOffset={0.2} // 偏移投射反射的虛擬相機。當反射表面距離物體原點一定距離時很有用
       />
     </mesh>
   );
